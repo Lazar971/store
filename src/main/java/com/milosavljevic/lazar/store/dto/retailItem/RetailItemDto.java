@@ -10,4 +10,5 @@ public class RetailItemDto {
     private String name;
     private BigDecimal price;
     private Double quantity;
+    private BigDecimal discountedPrice;
 }
