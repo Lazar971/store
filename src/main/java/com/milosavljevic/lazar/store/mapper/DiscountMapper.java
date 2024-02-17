@@ -27,5 +27,5 @@ public interface DiscountMapper {
   void updateDiscountFromDto(WriteDiscountDto dto, @MappingTarget Discount discount);
 
   @Mapping(target = "discountedPrice", ignore = true)
-  List<RetailItemDto> toRetailItemDto(RetailItem retailItem);
+  List<RetailItemDto> toRetailItemDto(List<RetailItem> retailItems);
 }

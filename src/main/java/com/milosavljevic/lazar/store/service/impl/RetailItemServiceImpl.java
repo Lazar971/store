@@ -7,11 +7,11 @@ import com.milosavljevic.lazar.store.mapper.RetailItemMapper;
 import com.milosavljevic.lazar.store.repository.RetailItemRepository;
 import com.milosavljevic.lazar.store.service.RetailItemService;
 import jakarta.annotation.Nullable;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @AllArgsConstructor
@@ -20,11 +20,13 @@ public class RetailItemServiceImpl implements RetailItemService {
     private  final RetailItemRepository retailItemRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public Page<RetailItemDto> searchItems(@Nullable  String search, Pageable pageable) {
         return retailItemRepository.searchItems(search == null ? "" : search, pageable).map(retailItemMapper::toDto);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public RetailItemDto fetchById(Long id) {
         return retailItemMapper.toDto(this.findItemById(id));
     }

@@ -8,11 +8,11 @@ import com.milosavljevic.lazar.store.mapper.DiscountMapper;
 import com.milosavljevic.lazar.store.repository.DiscountRepository;
 import com.milosavljevic.lazar.store.repository.RetailItemRepository;
 import com.milosavljevic.lazar.store.service.DiscountService;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,13 +24,13 @@ public class DiscountServiceImpl implements DiscountService {
   private final DiscountRepository discountRepository;
   private final RetailItemRepository retailItemRepository;
   @Override
-  @Transactional
+  @Transactional(readOnly = true)
   public Page<DiscountDto> search(LocalDateTime date, Pageable pageable) {
     return discountRepository.searchByDate(date, pageable).map(this.discountMapper::toBaseDto);
   }
 
   @Override
-  @Transactional
+  @Transactional(readOnly = true)
   public DiscountDto findById(Long id) {
     return this.discountMapper.toDto(this.findOrThrow(id));
   }
