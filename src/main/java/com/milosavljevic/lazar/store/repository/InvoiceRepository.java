@@ -12,8 +12,8 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
 
   @Query("""
       SELECT i FROM Invoice i
-      WHERE (:start IS NULL OR o.issuanceDate > :start) AND
-            (:end IS NULL OR o.issuanceDate < :end)
+      WHERE (:start IS NULL OR i.issuanceDate > :start) AND
+            (:end IS NULL OR i.issuanceDate < :end)
       """)
   Page<Invoice> searchInvoices(LocalDateTime start, LocalDateTime end, Pageable pageable);
 }
