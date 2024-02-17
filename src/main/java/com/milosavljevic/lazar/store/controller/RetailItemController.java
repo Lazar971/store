@@ -3,6 +3,7 @@ package com.milosavljevic.lazar.store.controller;
 import com.milosavljevic.lazar.store.dto.retailItem.RetailItemDto;
 import com.milosavljevic.lazar.store.dto.retailItem.WriteRetailItemDto;
 import com.milosavljevic.lazar.store.service.RetailItemService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,12 +28,12 @@ public class RetailItemController {
     }
 
     @PostMapping
-    public RetailItemDto create(@RequestBody WriteRetailItemDto dto) {
+    public RetailItemDto create(@Valid @RequestBody WriteRetailItemDto dto) {
         return retailItemService.create(dto);
     }
 
     @PutMapping("/{id}")
-    public RetailItemDto update(@PathVariable Long id, @RequestBody WriteRetailItemDto dto) {
+    public RetailItemDto update(@PathVariable Long id,@Valid @RequestBody WriteRetailItemDto dto) {
         return retailItemService.update(id, dto);
     }
 
