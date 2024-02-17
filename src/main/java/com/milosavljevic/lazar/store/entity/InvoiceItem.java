@@ -1,9 +1,6 @@
 package com.milosavljevic.lazar.store.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -12,6 +9,7 @@ import java.math.BigDecimal;
 @Data
 public class InvoiceItem {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private double amount;
     private BigDecimal unitPrice;

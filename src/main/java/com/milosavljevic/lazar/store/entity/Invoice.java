@@ -1,9 +1,6 @@
 package com.milosavljevic.lazar.store.entity;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -14,6 +11,7 @@ import java.util.Optional;
 @Data
 public class Invoice {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private LocalDateTime issuanceDate;
 
