@@ -10,4 +10,5 @@ public interface RetailItemRepository extends JpaRepository<RetailItem, Long> {
 
     @Query("SELECT i FROM RetailItem i WHERE i.name LIKE %:search%")
     Page<RetailItem> searchItems(String search, Pageable pageable);
+
 }

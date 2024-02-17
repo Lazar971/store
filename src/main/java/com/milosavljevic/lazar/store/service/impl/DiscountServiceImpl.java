@@ -44,7 +44,15 @@ public class DiscountServiceImpl implements DiscountService {
   @Transactional
   public DiscountDto create(WriteDiscountDto dto) {
     Discount discount = this.discountMapper.fromDto(dto);
-    discount.setItems(this.fetchItemsForIds(dto.getItemIds()));
+    this.validateDates(dto.getStartingFrom(), dto.getEnds());
+    List<RetailItem> items = this.fetchItemsForIds(dto.getItemIds());
+    if(!this.discountRepository
+        .findDiscountIdsForIntervalAndItems(dto.getStartingFrom(), dto.getEnds(), items)
+        .isEmpty()
+    ) {
+      throw new IllegalArgumentException("Some item already has a discount for these dates");
+    }
+    discount.setItems(items);
     return this.discountMapper.toDto(discountRepository.save(discount));
   }
 
@@ -52,8 +60,16 @@ public class DiscountServiceImpl implements DiscountService {
   @Transactional
   public DiscountDto update(Long id, WriteDiscountDto dto) {
     Discount discount = this.findOrThrow(id);
+    this.validateDates(dto.getStartingFrom(), dto.getEnds());
     this.discountMapper.updateDiscountFromDto(dto, discount);
-    discount.setItems(this.fetchItemsForIds(dto.getItemIds()));
+    List<RetailItem> items = this.fetchItemsForIds(dto.getItemIds());
+    if (this.discountRepository
+        .findDiscountIdsForIntervalAndItems(dto.getStartingFrom(), dto.getEnds(), items)
+        .stream().anyMatch(discountId -> !id.equals(discountId))
+    ) {
+      throw new IllegalArgumentException("Some item already has a discount for these dates");
+    }
+    discount.setItems(items);
     return this.discountMapper.toDto(discount);
   }
 
@@ -70,5 +86,11 @@ public class DiscountServiceImpl implements DiscountService {
       throw new IllegalArgumentException("Some id is missing");
     }
     return items;
+  }
+
+  private void validateDates(LocalDateTime start, LocalDateTime end){
+    if(start.isAfter(end)){
+      throw new IllegalArgumentException("Start is not before end");
+    }
   }
 }
