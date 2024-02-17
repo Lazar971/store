@@ -1,20 +1,22 @@
 package com.milosavljevic.lazar.store.service;
 
+import com.milosavljevic.lazar.store.dto.invoice.InvoiceDto;
 import com.milosavljevic.lazar.store.dto.invoice.InvoiceItemDto;
 import com.milosavljevic.lazar.store.dto.invoice.WriteInvoiceDto;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 
 public interface InvoiceService {
 
-  Page<InvoiceItemDto> searchInvoices(LocalDateTime start, LocalDateTime end);
+  Page<InvoiceDto> searchInvoices(LocalDateTime start, LocalDateTime end, Pageable pageable);
 
-  InvoiceItemDto findById(Long id);
+  InvoiceDto findById(Long id);
 
-  InvoiceItemDto create(WriteInvoiceDto dto);
+  InvoiceDto create(WriteInvoiceDto dto);
 
-  InvoiceItemDto update(Long id, WriteInvoiceDto dto);
+  InvoiceDto update(Long id, WriteInvoiceDto dto);
 
   void delete(Long id);
 }
