@@ -45,43 +45,25 @@ public class InvoiceServiceImpl implements InvoiceService {
   public InvoiceDto create(WriteInvoiceDto dto) {
     Invoice invoice = new Invoice();
     invoice.setIssuanceDate(dto.getIssuanceDate());
-    this.validateItemsQuantity(dto.getItems());
-    List<RetailItem> retailItems = this.fetchRetailItems(dto.getItems());
-    List<InvoiceItem> invoiceItems = new LinkedList<>();
-
-    for (RetailItem retailItem: retailItems) {
-      Optional<WriteInvoiceItemDto> invoiceItemDto = dto.getItems().stream()
-          .filter(item -> item.getRetailItemId() == retailItem.getId())
-          .findAny();
-      if (invoiceItemDto.isEmpty() || invoiceItemDto.get().getQuantity() > retailItem.getQuantity()) {
-        throw new IllegalArgumentException("Not enough quantity for retail item " + retailItem.getId());
-      }
-      InvoiceItem invoiceItem = new InvoiceItem();
-      invoiceItem.setInvoice(invoice);
-      invoiceItem.setRetailItem(retailItem);
-      invoiceItem.setAmount(invoiceItemDto.get().getQuantity());
-      invoiceItem.setUnitPrice(retailItem.getDiscountedPriceForDate(dto.getIssuanceDate()));
-
-      retailItem.setQuantity(retailItem.getQuantity() - invoiceItem.getAmount());
-    }
-
-    invoice.setInvoiceItems(invoiceItems);
+    this.saveItems(invoice, dto.getItems());
     return this.invoiceMapper.toDto(invoiceRepository.save(invoice));
   }
 
   @Override
   @Transactional
   public InvoiceDto update(Long id, WriteInvoiceDto dto) {
-    return null;
+    Invoice invoice = findOrThrow(id);
+    invoice.setIssuanceDate(dto.getIssuanceDate());
+    this.saveItems(invoice, dto.getItems());
+    return this.invoiceMapper.toDto(invoice);
   }
+
 
   @Override
   @Transactional
   public void delete(Long id) {
     Invoice invoice = findOrThrow(id);
-    for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
-      invoiceItem.getRetailItem().setQuantity(invoiceItem.getAmount() + invoiceItem.getRetailItem().getQuantity());
-    }
+    invoice.removeAllItems();
     invoiceRepository.delete(invoice);
   }
 
@@ -101,5 +83,20 @@ public class InvoiceServiceImpl implements InvoiceService {
       throw new IllegalArgumentException("Missing some retail item");
     }
     return retailItems;
+  }
+
+  private void saveItems(Invoice invoice, List<WriteInvoiceItemDto> itemDtoList) {
+    this.validateItemsQuantity(itemDtoList);
+    invoice.removeAllItems();
+    List<RetailItem> retailItems = this.fetchRetailItems(itemDtoList);
+    for (RetailItem retailItem: retailItems) {
+      Optional<WriteInvoiceItemDto> invoiceItemDto = itemDtoList.stream()
+          .filter(item -> item.getRetailItemId() == retailItem.getId())
+          .findAny();
+      if (invoiceItemDto.isEmpty()) {
+        throw new IllegalArgumentException("Missing invoice item for retail item id " + retailItem.getId());
+      }
+      invoice.saveItem(retailItem, invoiceItemDto.get().getQuantity());
+    }
   }
 }

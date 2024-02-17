@@ -14,7 +14,7 @@ import java.util.List;
 @Mapper
 public interface InvoiceMapper {
 
-  @Mapping(target = "items", expression = "java(this.toInvoiceItemsDto(invoice.getInvoiceItems()))")
+  @Mapping(target = "items", source = "invoiceItems")
   InvoiceDto toDto(Invoice invoice);
 
   @Mapping(target = "items", ignore = true)

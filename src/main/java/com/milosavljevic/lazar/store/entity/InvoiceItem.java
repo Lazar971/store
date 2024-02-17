@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 public class InvoiceItem {
     @Id
     private Long id;
-    private Double amount;
+    private double amount;
     private BigDecimal unitPrice;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private Invoice invoice;

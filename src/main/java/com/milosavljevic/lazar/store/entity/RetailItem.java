@@ -18,7 +18,7 @@ public class RetailItem {
     private Long id;
     private String name;
     private BigDecimal price;
-    private Double quantity;
+    private double quantity;
 
     @ManyToMany(mappedBy = "items")
     private List<Discount> discounts;
@@ -32,5 +32,12 @@ public class RetailItem {
       return discount
           .map(value -> this.price.multiply(value.getPercentage()).divide(BigDecimal.valueOf(100), RoundingMode.HALF_DOWN))
           .orElseGet(() -> this.price);
+    }
+
+    public void setQuantity(double value) {
+        if (value < 0) {
+            throw new IllegalArgumentException("Cannot set quantity to value less than 0");
+        }
+        this.quantity = value;
     }
 }
