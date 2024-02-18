@@ -22,7 +22,8 @@ public class RetailItemServiceImpl implements RetailItemService {
     @Override
     @Transactional(readOnly = true)
     public Page<RetailItemDto> searchItems(@Nullable  String search, Pageable pageable) {
-        return retailItemRepository.searchItems(search == null ? "" : search, pageable).map(retailItemMapper::toDto);
+        Page<RetailItem> retailItems = retailItemRepository.searchItems(search == null ? "" : search, pageable);
+        return retailItems.map(retailItemMapper::toDto);
     }
 
     @Override

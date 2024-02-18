@@ -1,11 +1,9 @@
 package com.milosavljevic.lazar.store.service.impl;
 
 import com.milosavljevic.lazar.store.dto.invoice.InvoiceDto;
-import com.milosavljevic.lazar.store.dto.invoice.InvoiceItemDto;
 import com.milosavljevic.lazar.store.dto.invoice.WriteInvoiceDto;
 import com.milosavljevic.lazar.store.dto.invoice.WriteInvoiceItemDto;
 import com.milosavljevic.lazar.store.entity.Invoice;
-import com.milosavljevic.lazar.store.entity.InvoiceItem;
 import com.milosavljevic.lazar.store.entity.RetailItem;
 import com.milosavljevic.lazar.store.mapper.InvoiceMapper;
 import com.milosavljevic.lazar.store.repository.InvoiceRepository;
@@ -18,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,10 +49,7 @@ public class InvoiceServiceImpl implements InvoiceService {
   @Override
   @Transactional
   public InvoiceDto update(Long id, WriteInvoiceDto dto) {
-    Invoice invoice = findOrThrow(id);
-    invoice.setIssuanceDate(dto.getIssuanceDate());
-    this.saveItems(invoice, dto.getItems());
-    return this.invoiceMapper.toDto(invoice);
+    return null;
   }
 
 
@@ -79,7 +73,7 @@ public class InvoiceServiceImpl implements InvoiceService {
   private List<RetailItem> fetchRetailItems(List<WriteInvoiceItemDto> itemDtoList) {
     List<RetailItem> retailItems = retailItemRepository.findAllById(itemDtoList.stream()
         .map(WriteInvoiceItemDto::getRetailItemId).toList());
-    if(retailItems.size() <= itemDtoList.size()) {
+    if(retailItems.size() < itemDtoList.size()) {
       throw new IllegalArgumentException("Missing some retail item");
     }
     return retailItems;
@@ -87,7 +81,6 @@ public class InvoiceServiceImpl implements InvoiceService {
 
   private void saveItems(Invoice invoice, List<WriteInvoiceItemDto> itemDtoList) {
     this.validateItemsQuantity(itemDtoList);
-    invoice.removeAllItems();
     List<RetailItem> retailItems = this.fetchRetailItems(itemDtoList);
     for (RetailItem retailItem: retailItems) {
       Optional<WriteInvoiceItemDto> invoiceItemDto = itemDtoList.stream()

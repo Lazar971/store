@@ -14,6 +14,7 @@ public class InvoiceItem {
     private double amount;
     private BigDecimal unitPrice;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "invoice_id", updatable = false)
     private Invoice invoice;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private RetailItem retailItem;

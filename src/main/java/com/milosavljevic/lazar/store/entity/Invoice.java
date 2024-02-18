@@ -4,8 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Entity
 @Data
@@ -31,6 +30,10 @@ public class Invoice {
     }
 
     public void removeAllItems() {
+        if(this.invoiceItems == null) {
+            this.invoiceItems = new ArrayList<>();
+            return;
+        }
         for (InvoiceItem invoiceItem : invoiceItems) {
             invoiceItem.getRetailItem()
                 .setQuantity(invoiceItem.getAmount() + invoiceItem.getRetailItem().getQuantity());
@@ -45,5 +48,9 @@ public class Invoice {
         invoiceItem.setAmount(quantity);
         invoiceItem.setUnitPrice(retailItem.getDiscountedPriceForDate(this.issuanceDate));
         retailItem.setQuantity(retailItem.getQuantity() - quantity);
+        if(this.invoiceItems == null) {
+            this.invoiceItems = new ArrayList<>();
+        }
+        invoiceItems.add(invoiceItem);
     }
 }

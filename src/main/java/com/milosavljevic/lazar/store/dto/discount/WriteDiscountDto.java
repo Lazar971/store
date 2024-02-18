@@ -1,8 +1,8 @@
 package com.milosavljevic.lazar.store.dto.discount;
 
-import com.milosavljevic.lazar.store.dto.retailItem.RetailItemDto;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -22,7 +22,6 @@ public class WriteDiscountDto {
   private LocalDateTime startingFrom;
   @NotNull
   private LocalDateTime ends;
-  @NotNull
-  @Min(1)
+  @NotEmpty
   private List<Long> itemIds;
 }

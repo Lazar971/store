@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -52,25 +53,14 @@ public class DiscountServiceImpl implements DiscountService {
     ) {
       throw new IllegalArgumentException("Some item already has a discount for these dates");
     }
-    discount.setItems(items);
+    discount.setItems(new HashSet<>(items));
     return this.discountMapper.toDto(discountRepository.save(discount));
   }
 
   @Override
   @Transactional
   public DiscountDto update(Long id, WriteDiscountDto dto) {
-    Discount discount = this.findOrThrow(id);
-    this.validateDates(dto.getStartingFrom(), dto.getEnds());
-    this.discountMapper.updateDiscountFromDto(dto, discount);
-    List<RetailItem> items = this.fetchItemsForIds(dto.getItemIds());
-    if (this.discountRepository
-        .findDiscountIdsForIntervalAndItems(dto.getStartingFrom(), dto.getEnds(), items)
-        .stream().anyMatch(discountId -> !id.equals(discountId))
-    ) {
-      throw new IllegalArgumentException("Some item already has a discount for these dates");
-    }
-    discount.setItems(items);
-    return this.discountMapper.toDto(discount);
+    return null;
   }
 
   @Override

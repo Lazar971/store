@@ -22,14 +22,13 @@ public class RetailItem {
     @ManyToMany(mappedBy = "items")
     private List<Discount> discounts;
 
-
-    public BigDecimal getDiscountedPriceForDate(LocalDateTime localDateTime){
-       Optional<Discount> discount = this.discounts
+    public BigDecimal getDiscountedPriceForDate(LocalDateTime localDateTime) {
+       Optional<Discount> discount = getDiscounts()
             .stream()
             .filter(disc -> !disc.getStartingFrom().isAfter(localDateTime) && disc.getEnds().isAfter(localDateTime))
             .findAny();
       return discount
-          .map(value -> this.price.multiply(value.getPercentage()).divide(BigDecimal.valueOf(100), RoundingMode.HALF_DOWN))
+          .map(value -> this.price.multiply(BigDecimal.valueOf(100).subtract(value.getPercentage())).divide(BigDecimal.valueOf(100), RoundingMode.HALF_DOWN))
           .orElseGet(() -> this.price);
     }
 

@@ -10,6 +10,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 import java.util.List;
+import java.util.Set;
 
 @Mapper
 public interface DiscountMapper {
@@ -27,5 +28,5 @@ public interface DiscountMapper {
   void updateDiscountFromDto(WriteDiscountDto dto, @MappingTarget Discount discount);
 
   @Mapping(target = "discountedPrice", ignore = true)
-  List<RetailItemDto> toRetailItemDto(List<RetailItem> retailItems);
+  Set<RetailItemDto> toRetailItemDto(Set<RetailItem> retailItems);
 }
